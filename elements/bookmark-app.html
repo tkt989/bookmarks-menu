@@ -1,0 +1,75 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-input/core-input.html">
+<link rel="import" href="../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../bower_components/core-localstorage/core-localstorage.html">
+<link rel="import" href="../elements/bookmark-list.html">
+<link rel="import" href="../elements/query-bookmark-list.html">
+
+<polymer-element name="bookmark-app">
+  <template>
+    <style>
+      #container {
+	width: 100%;
+	height: 100%;
+	padding: 3px;
+	box-sizing: border-box;
+      }
+
+      #search-box {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #e0e0e0;
+	margin-bottom: 5px;
+      }
+
+      #search-icon {
+	color: #858585;
+	width: 16px;
+	height: 16px;
+	flex: 0 0 16px;
+      }
+
+      #search-input {
+	padding-left: 5px;
+	line-height: 14px;
+	flex: 1 0;
+      }
+    </style>
+
+    <core-localstorage name="parent" value="{{ parent }}"></core-localstorage>
+    
+    <div id="container">
+      <div id="search-box" horizontal layout>
+	<core-icon id="search-icon" icon="search"></core-icon>
+	<core-input id="search-input"
+		    placeholder="search"
+		    inputValue="{{ query }}"
+		    on-keydown="{{ enter }}"
+		    autofocus>
+	</core-input>
+      </div>
+
+      <template if="{{ query == '' }}">
+	<bookmark-list parent="{{ parent }}">
+	</bookmark-list>
+      </template>
+
+      <template if="{{ query != '' }}">
+	<query-bookmark-list id="qbl" query="{{ query }}"></query-bookmark-list>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      query: "",
+
+      enter: function (event) {
+	if (event.keyCode == 13) {
+	  var qbl = this.$.container.querySelector("#qbl");
+	  qbl.open(0);
+	}
+      }
+    });
+  </script>
+</polymer-element>

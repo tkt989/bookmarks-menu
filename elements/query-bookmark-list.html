@@ -1,0 +1,83 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="item-site.html">
+
+<polymer-element name="query-bookmark-list" attributes="query">
+  <template>
+    <style>
+      ul {
+	padding: 0;
+	margin: 0;
+      }
+
+      ul > li {
+	list-style: none;
+      }
+    </style>
+
+    <ul id="container">
+      <template repeat="{{ bookmark in bookmarks }}">
+	<li>
+	  <item-site class="item"
+		     itemId="{{ bookmark.id }}"
+		     itemTitle="{{ bookmark.title }}"
+		     itemUrl="{{ bookmark.url }}"
+		     on-click="{{ openSite }}">
+	  </item-site>
+	</li>
+      </template>
+    </ul>
+    {{ path }}
+
+  </template>
+
+  <script>
+    Polymer({
+      queryChanged: function () {
+	this.refreshBookmarks();
+      },
+      
+      openSite: function (event, detail, sender) {
+	var itemId = sender.itemId;
+	chrome.bookmarks.get(itemId, function (results) {
+	  var bookmark = results[0];
+
+	  if (this.isBookmarklet(bookmark)) {
+	    chrome.tabs.executeScript(null, { code: unescape(bookmark.url.substr(11)) });
+	  } else {
+	    window.open(bookmark.url);
+	  }
+
+	  window.close();
+	}.bind(this));
+      },
+
+      refreshBookmarks: function () {
+	this.bookmarks = [];
+	chrome.bookmarks.search(this.query, function (results) {
+	  for (var i = 0; i < results.length; i++) {
+	    this.bookmarks.push(results[i]);
+	  }
+
+	  this.bookmarks = this.bookmarks.filter(this.isSite);
+	}.bind(this));
+      },
+
+      open: function (index) {
+	var items = this.$.container.querySelectorAll(".item");
+	items[index].click();
+      },
+
+      isBookmarklet: function (bookmark) {
+	return /javascript:/.exec(bookmark.url) != null;
+      },
+
+      isSite: function (bookmark) {
+	return bookmark.url != null;
+      },
+      
+      created: function () {
+	this.bookmarks = [];
+      }
+    });
+  </script>
+</polymer-element>

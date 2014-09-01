@@ -1,0 +1,42 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="bookmark-item.html">
+
+<polymer-element name="item-site"
+		 attributes="itemId itemTitle itemUrl">
+  <template>
+    <style>
+      #url, #title {
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+      }
+
+      #title {
+	color: #444444;
+      }
+      
+      #url {
+	color: #808080;
+	font-size: 80%;
+      }
+    </style>
+
+    <bookmark-item>
+      <img class="icon" src="chrome://favicon/{{ itemUrl }}">
+
+      <span class="text">
+	<div id="title">{{ itemTitle }}</div>
+	<div id="url">{{ itemUrl }}</div>
+      </span>
+    </bookmark-item>
+  </template>
+  
+  <script>
+    Polymer({
+      ready: function () {
+      }
+    });
+  </script>
+</polymer-element>
+

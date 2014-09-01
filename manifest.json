@@ -1,0 +1,20 @@
+{
+    "manifest_version": 2,
+    "name": "Bookmarks Menu",
+    "version": "0.0.1",
+
+    "icons": {
+	"128": "icon128.png"
+    },
+
+    "permissions": [
+	"bookmarks",
+	"activeTab",
+	"chrome://favicon/*/*"
+    ],
+
+    "browser_action": {
+	"default_icon": "icon38.png",
+	"default_popup": "popup.html"
+    }
+}

@@ -1,0 +1,115 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="item-folder.html">
+<link rel="import" href="item-site.html">
+
+<polymer-element name="bookmark-list" attributes="parent selected">
+  <template>
+    <style>
+      ul {
+	padding: 0;
+	margin: 0;
+      }
+
+      ul > li {
+	list-style: none;
+      }
+    </style>
+
+    <ul>
+      <template if="{{ parent != '0' }}">
+	<li>
+	  <item-folder class="item"
+		       itemId="{{ grandParent }}"
+		       itemTitle="../"
+		       on-click="{{ openFolder }}">
+	  </item-folder>
+	</li>
+      </template>
+      
+      <template repeat="{{ bookmark, index in bookmarks }}">
+	<li>
+	  <template if="{{ isFolder(bookmark) }}">
+	    <item-folder class="item"
+			 itemId="{{ bookmark.id }}"
+			 itemTitle="{{ bookmark.title }}"
+			 on-click="{{ openFolder }}">
+	    </item-folder>
+	  </template>
+
+	  <template if="{{ !isFolder(bookmark) }}">
+	    <item-site class="item"
+		       itemId="{{ bookmark.id }}"
+		       itemTitle="{{ bookmark.title }}"
+		       itemUrl="{{ bookmark.url }}"
+		       on-click="{{ openSite }}"">
+	    </item-site>
+	  </template>
+	</li>
+      </template>
+    </ul>
+    {{ path }}
+
+  </template>
+
+  <script>
+    Polymer({
+      parentChanged: function () {
+	this.refreshBookmarks();
+	this.refreshGrandParent();
+      },
+
+      openFolder: function (event, detail, sender) {
+	this.parent = sender.itemId;
+      },
+
+      openKey: function (event, detail, sender) {
+	if (event.keyCode == 13) {
+	  var item = sender.querySelector(".item");
+	  item.click();
+	}
+      },
+
+      openSite: function (event, detail, sender) {
+	var itemId = sender.itemId;
+	chrome.bookmarks.get(itemId, function (results) {
+	  var bookmark = results[0];
+
+	  if (this.isBookmarklet(bookmark)) {
+	    chrome.tabs.executeScript(null, { code: unescape(bookmark.url.substr(11)) });
+	  } else {
+	    window.open(bookmark.url);
+	  }
+
+	  window.close();
+	}.bind(this));
+      },
+
+      isFolder: function (bookmark) {
+	return bookmark.url == null;
+      },
+      
+      isBookmarklet: function (bookmark) {
+	return /javascript:/.exec(bookmark.url) != null;
+      },
+
+      refreshBookmarks: function () {
+	this.bookmarks = [];
+	chrome.bookmarks.getChildren(this.parent, function (results) {
+	  for (var i = 0; i < results.length; i++) {
+	    this.bookmarks.push(results[i]);
+	  }
+	}.bind(this));
+      },
+
+      refreshGrandParent: function () {
+	chrome.bookmarks.get(this.parent, function (results) {
+	  this.grandParent = results[0].parentId;
+	}.bind(this));
+      },
+      
+      created: function () {
+	this.bookmarks = [];
+      }
+    });
+  </script>
+</polymer-element>

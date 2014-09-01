@@ -1,0 +1,53 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="bookmark-item">
+  <template>
+    <style>
+      #container {
+	width: 100%;
+	background-color: transparent;
+	text-align: left;
+	cursor: pointer;
+	margin: 0;
+	padding: 5px;
+	border: none;
+	font-family: sans-serif;
+      }
+
+      #container:hover {
+	background-color: #f0f0f0;
+      }
+      
+      #icon {
+	width: 16px;
+	height: 16px;
+	line-height: 16px;
+	text-align: center;
+	vertical-align: middle;
+	flex: 0 0 16px;
+      }
+
+      #text {
+	padding-left: 5px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: pointer;
+      }
+    </style>
+
+    <button id="container" horizontal layout>
+      <span id="icon" flex self-center>
+	<content select=".icon"></content>
+      </span>
+      <span id="text" flex self-center>
+	<content select=".text"></content>
+      </span>
+    </button>
+
+  </template>
+
+  <script>
+    Polymer({});
+  </script>
+</polymer-element>

@@ -1,0 +1,32 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-icons/core-icons.html">
+<link rel="import" href="bookmark-item.html">
+
+<polymer-element name="item-folder"
+		 attributes="itemId itemTitle">
+  <template>
+    <style>
+      .icon {
+	color: #444444;
+	width: 16px;
+	height: 16px;
+      }
+      
+      .text {
+	color: #444444;
+      }
+    </style>
+
+    <bookmark-item>
+      <core-icon class="icon" icon="folder"></core-icon>
+
+      <span class="text">{{ itemTitle }}</span>
+    </bookmark-item>
+  </template>
+  
+  <script>
+    Polymer({
+    });
+  </script>
+</polymer-element>
+
